@@ -4,7 +4,7 @@ nox.options.error_on_external_run = True
 nox.options.reuse_existing_virtualenvs = True
 
 YAML_PATHS = [
-    "./zuul.d/",
+    "./workflow-executor/src/crds/",
 ]
 
 PYTHON_PATHS = [
