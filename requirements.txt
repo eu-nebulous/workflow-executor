@@ -1,0 +1,3 @@
+Python-Proxy
+kubernetes
+prometheus_client
