@@ -17,6 +17,7 @@ class Scheduler():
 
         try:
             try:
+                print("Trying to load in-cluster config.")
                 config.load_incluster_config()
             except:
                 print("In-cluster config not found, loading kube config from local machine.")       
