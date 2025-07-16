@@ -1,3 +1,2 @@
-Python-Proxy
-kubernetes
-prometheus_client
+kubernetes==26.1.0
+prometheus_client==0.22.1
