@@ -8,10 +8,10 @@ import threading
 import os
 from scheduler import Scheduler
 
-PROXY_PORT = os.environ.get('PROXY_PORT', 8080)
+PROXY_PORT = int(os.environ.get('PROXY_PORT', 8080))
 PROXY_ADDRESS = os.environ.get('PROXY_ADDRESS', "0.0.0.0")
 TARGET_SERVER = os.environ.get('TARGET_SERVER', "http://0.0.0.0")
-TARGET_PORT = os.environ.get('TARGET_PORT', 2746)
+TARGET_PORT = int(os.environ.get('TARGET_PORT', 2746))
 
 scheduler = Scheduler(
     TARGET_SERVER,
