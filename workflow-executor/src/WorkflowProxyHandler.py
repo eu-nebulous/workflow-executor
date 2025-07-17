@@ -1,6 +1,7 @@
 import logging
 import http.server
 import socketserver
+import sys
 import requests
 from requests.exceptions import RequestException
 import json
@@ -10,8 +11,9 @@ import os
 from scheduler import Scheduler
 
 logger  = logging.getLogger(__name__)
-handler = logging.Handler()
+handler = logging.StreamHandler(sys.stdout)
 handler.setLevel(logging.INFO)
+handler.s
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
 logger.addHandler(handler)
