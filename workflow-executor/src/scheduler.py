@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 
@@ -6,7 +7,9 @@ from kubernetes.client import CustomObjectsApi
 from prometheus_client import start_http_server, Gauge
 from utils import filter_nodes_by_label, parse_memory_to_bytes
 
-print("Starting metrics...")
+logger = logging.getLogger(__name__)
+
+logger.info("Starting metrics...")
 start_http_server(int(os.environ.get('METRICS_PORT', 9999)))
 class Scheduler():
     def __init__(
@@ -19,10 +22,10 @@ class Scheduler():
 
         try:
             try:
-                print("Trying to load in-cluster config.")
+                logger.info("Trying to load in-cluster config.")
                 config.load_incluster_config()
             except:
-                print("In-cluster config not found, loading kube config from local machine.")
+                logger.warming("In-cluster config not found, loading kube config from local machine.")
                 config.load_kube_config()                
 
             self.argo_ip = argo_ip
@@ -38,7 +41,7 @@ class Scheduler():
 
             self.check_publish_metrics()
         except Exception as e:
-            print(f"Cluster context can not be retrieved: {e}")
+            logger.error(f"Cluster context can not be retrieved: {e}")
 
 
     def define_metrics(self):
@@ -83,7 +86,7 @@ class Scheduler():
             )
             return workflows.get('items')
         except client.ApiException as e:
-            print(f"Error fetching Argo Workflows: {e}") 
+            logger.error(f"Error fetching Argo Workflows: {e}") 
             return []
 
     def publish_metrics(self):
@@ -145,7 +148,9 @@ class Scheduler():
                 self.label_workflow_nodes()
                 self.publish_metrics()
             else:
-                raise Exception("No workflow workers defined.")
+                error_message = "No workflow workers defined."
+                logger.error(error_message)
+                raise Exception(error_message)
 
         self.publish_metrics()         
 
@@ -159,7 +164,7 @@ class Scheduler():
 
             return workflow_nodes
         except client.ApiException as e:
-            print(f"Error fetching Argo Workflows: {e}") 
+            logger.error(f"Error fetching Argo Workflows: {e}") 
             return []
 
 
@@ -174,7 +179,7 @@ class Scheduler():
 
             return crds
         except client.ApiException as e:
-            print(f"Error fetching CRDS: {e}") 
+            logger.error(f"Error fetching CRDS: {e}") 
             return []
         
     def label_workflow_nodes(self):
@@ -217,7 +222,7 @@ class Scheduler():
                             break
 
                         except Exception as e:
-                            print(e)
+                            logger.error(e)
 
         self.workers = workers
 
@@ -260,12 +265,10 @@ class Scheduler():
                     i,
                     body=client.V1DeleteOptions(),
                 )
-                print(api_response)
+                logger.info(api_response)
 
         if nodes_to_add:
             for i in nodes_to_add: 
-                print(i)
-                print(cluster_nodes[i])
                 body = {
                     "apiVersion": f"{group}/{v}",
                     "kind": "WorkflowNodes",
@@ -281,7 +284,6 @@ class Scheduler():
                     plural,
                     body=body
                 )
-                print(api_response)
 
         self.publish_metrics()
 
@@ -344,7 +346,7 @@ class Scheduler():
             return workflow
         
         except Exception as e:
-            print(e)
+            logger.error(e)
             return workflow
 
 def main():
