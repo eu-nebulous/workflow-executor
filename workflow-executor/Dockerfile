@@ -11,4 +11,4 @@ COPY src/*.py .
 EXPOSE 8080
 EXPOSE 9999
 
-CMD ["python", "WorkflowProxyHandler.py"]
+CMD ["python3", "-u", "/workflow/WorkflowProxyHandler.py"]
