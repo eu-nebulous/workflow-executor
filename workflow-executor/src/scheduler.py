@@ -1,4 +1,3 @@
-import logging
 import os
 import re
 
@@ -7,7 +6,6 @@ from kubernetes.client import CustomObjectsApi
 from prometheus_client import start_http_server, Gauge
 from utils import filter_nodes_by_label, parse_memory_to_bytes
 
-logger = logging.getLogger(__name__)
 
 start_http_server(int(os.environ.get('METRICS_PORT', 9999)))
 class Scheduler():
@@ -21,7 +19,6 @@ class Scheduler():
 
         try:
             try:
-                print("Trying to load kube config from local machine.", flush=True)
                 print("Trying to load in-cluster config.", flush=True)
                 config.load_incluster_config()
             except:
@@ -189,6 +186,8 @@ class Scheduler():
             key=lambda x: (x.status.capacity.get("cpu"), x.status.capacity.get("memory")),
             reverse=True,
         )
+
+        print(nodes, flush=True)
 
         workflow_nodes = sorted(
             self.__get_crds("workflowworkers").get("items"),

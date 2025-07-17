@@ -10,13 +10,6 @@ import threading
 import os
 from scheduler import Scheduler
 
-logger  = logging.getLogger(__name__)
-handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.INFO)
-handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
-
-logger.addHandler(handler)
-
 PROXY_PORT = int(os.environ.get('PROXY_PORT', 8080))
 PROXY_ADDRESS = os.environ.get('PROXY_ADDRESS', "0.0.0.0")
 TARGET_SERVER = os.environ.get('TARGET_SERVER', "http://0.0.0.0")
