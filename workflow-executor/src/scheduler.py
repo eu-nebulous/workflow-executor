@@ -9,7 +9,7 @@ from utils import filter_nodes_by_label, parse_memory_to_bytes
 
 logger = logging.getLogger(__name__)
 
-logger.info("Starting metrics...")
+print("Starting metrics...", flush=True)
 start_http_server(int(os.environ.get('METRICS_PORT', 9999)))
 class Scheduler():
     def __init__(
@@ -23,7 +23,7 @@ class Scheduler():
         try:
             try:
                 print("Trying to load kube config from local machine.", flush=True)
-                logger.info("Trying to load in-cluster config.")
+                print("Trying to load in-cluster config.", flush=True)
                 config.load_incluster_config()
             except:
                 logger.warming("In-cluster config not found, loading kube config from local machine.")
@@ -266,7 +266,7 @@ class Scheduler():
                     i,
                     body=client.V1DeleteOptions(),
                 )
-                logger.info(api_response)
+                print(api_response, flush=True)
 
         if nodes_to_add:
             for i in nodes_to_add: 

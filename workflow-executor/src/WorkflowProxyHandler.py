@@ -22,8 +22,7 @@ PROXY_ADDRESS = os.environ.get('PROXY_ADDRESS', "0.0.0.0")
 TARGET_SERVER = os.environ.get('TARGET_SERVER', "http://0.0.0.0")
 TARGET_PORT = int(os.environ.get('TARGET_PORT', 2746))
 
-logger.info(f"--- Starting Scheduler ---")
-logger.handlers[0].flush()
+print(f"--- Starting Scheduler ---", flush=True)
 scheduler = Scheduler(
     TARGET_SERVER,
     TARGET_PORT,
@@ -52,7 +51,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
         The core logic for forwarding requests and modifying responses.
         """
         target_url = f"{TARGET_SERVER}:{TARGET_PORT}{self.path}"
-        logger.info(f"Proxying request: {method} {self.path} -> {target_url}")
+        print(f"Proxying request: {method} {self.path} -> {target_url}", flush=True)
 
         request_headers = dict(self.headers)
         request_body = None
@@ -64,7 +63,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
             self.send_error(400, "Invalid Content-Length header")
             return
         
-        logger.info(f"Request address: {TARGET_SERVER}:{TARGET_PORT}")
+        print(f"Request address: {TARGET_SERVER}:{TARGET_PORT}", flush=True)
         request_headers["Host"] = TARGET_SERVER.split('//')[1].split('/')[0]
 
         try:
@@ -113,7 +112,7 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
                 self.send_error(500, "Internal Server Error", error_message)
 
 def publish_metrics(scheduler):
-    logger.info("--- Publishing metrics ---")
+    print("--- Publishing metrics ---", flush=True)
     while True:
         time.sleep(5)
         try:
@@ -127,15 +126,15 @@ def run_proxy():
     """
     httpd = socketserver.ThreadingTCPServer((PROXY_ADDRESS, PROXY_PORT), ProxyHandler)
 
-    logger.info(f"--- Starting HTTP Proxy Server on port {PROXY_PORT} ---")
-    logger.info(f"--- Forwarding requests to: {TARGET_SERVER}:{TARGET_PORT} ---")
+    print(f"--- Starting HTTP Proxy Server on port {PROXY_PORT} ---", flush=True)
+    print(f"--- Forwarding requests to: {TARGET_SERVER}:{TARGET_PORT} ---", flush=True)
     
     try:
         metrics = threading.Thread(target=publish_metrics, args=(scheduler,))
         metrics.start()
         httpd.serve_forever()
     except KeyboardInterrupt:
-        logger.info("\n--- Shutting down the proxy server. ---")
+        print("\n--- Shutting down the proxy server. ---", flush=True)
         httpd.shutdown()
         httpd.server_close()
         metrics.join(timeout=2)
