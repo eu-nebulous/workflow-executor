@@ -187,8 +187,6 @@ class Scheduler():
             reverse=True,
         )
 
-        print(nodes, flush=True)
-
         workflow_nodes = sorted(
             self.__get_crds("workflowworkers").get("items"),
             key=lambda x: (x.get("spec").get("cpu"), x.get("spec").get("memory")),
