@@ -1,4 +1,10 @@
+import logging
 import re
+
+class StreamFlushingHandler(logging.StreamHandler):
+    def emit(self, record):
+        super().emit(record)
+        self.flush()
 
 def filter_nodes_by_label(labels, regex):
     for key, _ in labels.items():   # iter on both keys and values

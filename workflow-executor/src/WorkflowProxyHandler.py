@@ -9,9 +9,10 @@ import time
 import threading
 import os
 from scheduler import Scheduler
+from utils import StreamFlushingHandler
 
 logger  = logging.getLogger(__name__)
-handler = logging.StreamHandler(sys.stdout)
+handler = StreamFlushingHandler(sys.stdout)
 handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
