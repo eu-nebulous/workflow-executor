@@ -100,14 +100,14 @@ class ProxyHandler(http.server.BaseHTTPRequestHandler):
             # self.wfile.close()
 
         except BrokenPipeError:
-            logger.error(f"Broken Pipe Error: Client {self.client_address} disconnected prematurely.")
+            print(f"Broken Pipe Error: Client {self.client_address} disconnected prematurely.", flush=True)
 
         except RequestException as e:
             error_message = f"Proxy could not connect to target server: {e}"
-            logger.error(error_message)
+            print(error_message, flush=True)
             self.send_error(502, "Bad Gateway", error_message)
         except Exception as e:
-            logger.error(f"An unexpected error occurred: {e}")
+            print(f"An unexpected error occurred: {e}", flush=True)
             if not self.headers_sent:
                 self.send_error(500, "Internal Server Error", error_message)
 
@@ -118,7 +118,7 @@ def publish_metrics(scheduler):
         try:
             scheduler.check_publish_metrics()
         except Exception as e:
-            logger.error(f"Error publishing metrics: {e}")
+            print(f"Error publishing metrics: {e}", flush=True)
             
 def run_proxy():
     """

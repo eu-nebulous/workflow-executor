@@ -9,7 +9,6 @@ from utils import filter_nodes_by_label, parse_memory_to_bytes
 
 logger = logging.getLogger(__name__)
 
-print("Starting metrics...", flush=True)
 start_http_server(int(os.environ.get('METRICS_PORT', 9999)))
 class Scheduler():
     def __init__(
@@ -26,7 +25,7 @@ class Scheduler():
                 print("Trying to load in-cluster config.", flush=True)
                 config.load_incluster_config()
             except:
-                logger.warming("In-cluster config not found, loading kube config from local machine.")
+                print("In-cluster config not found, loading kube config from local machine.", flush=True)
                 config.load_kube_config()                
 
             self.argo_ip = argo_ip
@@ -42,7 +41,7 @@ class Scheduler():
 
             self.check_publish_metrics()
         except Exception as e:
-            logger.error(f"Cluster context can not be retrieved: {e}")
+            print(f"Cluster context can not be retrieved: {e}", flush=True)
 
 
     def define_metrics(self):
@@ -87,7 +86,7 @@ class Scheduler():
             )
             return workflows.get('items')
         except client.ApiException as e:
-            logger.error(f"Error fetching Argo Workflows: {e}") 
+            print(f"Error fetching Argo Workflows: {e}", flush=True) 
             return []
 
     def publish_metrics(self):
@@ -150,7 +149,7 @@ class Scheduler():
                 self.publish_metrics()
             else:
                 error_message = "No workflow workers defined."
-                logger.error(error_message)
+                print(error_message, flush=True)
                 raise Exception(error_message)
 
         self.publish_metrics()         
@@ -165,7 +164,7 @@ class Scheduler():
 
             return workflow_nodes
         except client.ApiException as e:
-            logger.error(f"Error fetching Argo Workflows: {e}") 
+            print(f"Error fetching Argo Workflows: {e}", flush=True) 
             return []
 
 
@@ -180,7 +179,7 @@ class Scheduler():
 
             return crds
         except client.ApiException as e:
-            logger.error(f"Error fetching CRDS: {e}") 
+            print(f"Error fetching CRDS: {e}", flush=True) 
             return []
         
     def label_workflow_nodes(self):
@@ -223,7 +222,7 @@ class Scheduler():
                             break
 
                         except Exception as e:
-                            logger.error(e)
+                            print(e, flush=True)
 
         self.workers = workers
 
@@ -347,7 +346,7 @@ class Scheduler():
             return workflow
         
         except Exception as e:
-            logger.error(e)
+            print(e, flush=True)
             return workflow
 
 def main():
