@@ -5,6 +5,7 @@ from kubernetes.client import CustomObjectsApi
 from prometheus_client import start_http_server, Gauge
 from utils import filter_nodes_by_label, parse_memory_to_bytes
 
+print("Starting metrics...")
 start_http_server(9999)
 class Scheduler():
     def __init__(

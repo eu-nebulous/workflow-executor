@@ -13,6 +13,7 @@ PROXY_ADDRESS = os.environ.get('PROXY_ADDRESS', "0.0.0.0")
 TARGET_SERVER = os.environ.get('TARGET_SERVER', "http://0.0.0.0")
 TARGET_PORT = int(os.environ.get('TARGET_PORT', 2746))
 
+print(f"--- Starting Scheduler ---")
 scheduler = Scheduler(
     TARGET_SERVER,
     TARGET_PORT,
