@@ -11,7 +11,7 @@ from scheduler import Scheduler
 
 logger  = logging.getLogger(__name__)
 handler = logging.Handler()
-handler.setLevel(logger, logging.INFO)
+handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
 logger.addHandler(handler)
