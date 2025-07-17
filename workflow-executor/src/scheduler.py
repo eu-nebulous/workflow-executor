@@ -181,7 +181,7 @@ class Scheduler():
         
     def label_workflow_nodes(self):
         nodes = sorted([ 
-                node for node in self.core_client.list_node().items if filter_nodes_by_label(node.metadata.labels, r"nebulouscloud.eu/.+worker-.+") and not node.spec.unschedulable
+                node for node in self.core_client.list_node().items if filter_nodes_by_label(node.metadata.labels, r"nebulouscloud\.eu/?.+worker?.+") and not node.spec.unschedulable
             ], 
             key=lambda x: (x.status.capacity.get("cpu"), x.status.capacity.get("memory")),
             reverse=True,
