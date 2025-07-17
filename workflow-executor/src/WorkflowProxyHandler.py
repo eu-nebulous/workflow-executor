@@ -11,11 +11,11 @@ import os
 from scheduler import Scheduler
 from utils import StreamFlushingHandler
 
-logger  = logging.getLogger(__name__)
 handler = StreamFlushingHandler(sys.stdout)
 handler.setLevel(logging.INFO)
 handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
 
+logger  = logging.getLogger(__name__)
 logger.addHandler(handler)
 
 PROXY_PORT = int(os.environ.get('PROXY_PORT', 8080))
@@ -24,6 +24,8 @@ TARGET_SERVER = os.environ.get('TARGET_SERVER', "http://0.0.0.0")
 TARGET_PORT = int(os.environ.get('TARGET_PORT', 2746))
 
 logger.info(f"--- Starting Scheduler ---")
+logger.handlers[0].flush()
+
 scheduler = Scheduler(
     TARGET_SERVER,
     TARGET_PORT,
