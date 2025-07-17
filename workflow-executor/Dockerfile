@@ -11,6 +11,6 @@ COPY src/*.py .
 EXPOSE 8080
 EXPOSE 9999
 
-ENV PYTHONUNBUFFERED=0
+ENV PYTHONUNBUFFERED=1
 
-CMD ["python3", "-u", "/workflow/WorkflowProxyHandler.py"]
+CMD ["python3", "WorkflowProxyHandler.py"]
