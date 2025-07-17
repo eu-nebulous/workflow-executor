@@ -22,9 +22,8 @@ class Scheduler():
                 print("Trying to load in-cluster config.")
                 config.load_incluster_config()
             except:
-                print("In-cluster config not found, loading kube config from local machine.")       
-            finally: 
-                config.load_kube_config()
+                print("In-cluster config not found, loading kube config from local machine.")
+                config.load_kube_config()                
 
             self.argo_ip = argo_ip
             self.argo_port = argo_port
