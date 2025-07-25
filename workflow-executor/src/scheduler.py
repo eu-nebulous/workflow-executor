@@ -87,6 +87,8 @@ class Scheduler():
             return []
 
     def publish_metrics(self):
+        self.label_workflow_nodes()
+        
         for worker, size in self.workers.items():
             self.metrics.get('nodes').get(worker).set(size)
             
@@ -142,7 +144,6 @@ class Scheduler():
             self.define_metrics()
 
             if self.metrics:
-                self.label_workflow_nodes()
                 self.publish_metrics()
             else:
                 error_message = "No workflow workers defined."
