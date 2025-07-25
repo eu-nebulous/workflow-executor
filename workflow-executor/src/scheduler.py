@@ -111,7 +111,7 @@ class Scheduler():
 
             pending_workflows = 0
             for workflow in workflows:
-                for node in workflow.get('status').get('nodes'):
+                for node in workflow.get('status').get('nodes').values():
                     if node.get('type') == 'DAG':
                         if node.get('phase') == 'Pending':
                             pending_workflows += 1
