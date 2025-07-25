@@ -182,30 +182,20 @@ class Scheduler():
 
         workers = {}
 
-        print(f"Nodes {len(nodes)}", flush=True)
-        print(f"workflowworkers {len(workflow_nodes)}", flush=True)
-
         for node in nodes:
             for workflow_node in workflow_nodes:
-                print(f"CPU: {node.status.capacity.get('cpu')} - {workflow_node.get('spec').get('cpu')}", flush=True)
-                print(f"Memory: {parse_memory_to_bytes(node.status.capacity.get('memory'))} - {parse_memory_to_bytes(workflow_node.get('spec').get('memory'))}", flush=True)
                 if node.status.capacity.get('cpu') >= workflow_node.get('spec').get('cpu') and \
                     parse_memory_to_bytes(node.status.capacity.get('memory')) >= parse_memory_to_bytes(workflow_node.get('spec').get('memory')):
                         try:
-                            body = {
-                                "metadata": {
-                                    "labels": {
-                                        "workflow.nebulouscloud.eu/workersize": workflow_node.get('metadata').get('name')
-                                    }
-                                }
-                            }
-
-                            print(f"Node Name {node.metadata.name}", flush=True)
-                            print(f"Body {body}", flush=True)
-
                             self.core_client.patch_node(
                                 node.metadata.name,
-                                body,
+                                {
+                                    "metadata": {
+                                        "labels": {
+                                            "workflow.nebulouscloud.eu/workersize": workflow_node.get('metadata').get('name')
+                                        }
+                                    }
+                                }
                             )
                             if workflow_node.get('metadata').get('name') in workers:
                                 workers[workflow_node.get('metadata').get('name')] += 1
@@ -321,6 +311,9 @@ class Scheduler():
                         workflow.get('workflow').get('metadata') \
                             .get('labels')['workflow.nebulouscloud.eu/workersize'] = workflow_node.get("metadata").get("name")
                         for template in workflow.get('workflow').get('spec').get('templates'):
+                            print(f"metadata {workflow.get("workflow").get('metadata')}")
+                            print(f"labels {workflow.get("workflow").get('metadata').get('labels')}")
+                            print(f"labels workflow {workflow.get("workflow").get('metadata').get('labels').get('workflow')}")
                             template['affinity'] = {
                                 'podAffinity': {
                                     'requiredDuringSchedulingIgnoredDuringExecution': [{
