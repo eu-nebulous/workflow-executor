@@ -111,31 +111,15 @@ class Scheduler():
 
             pending_workflows = 0
             for workflow in workflows:
-                children = []
-                children_running = False
-                for node_id, node in workflow.get('status').get('nodes').items():
+                for node in workflow.get('status').get('nodes'):
                     if node.get('type') == 'DAG':
                         if node.get('phase') == 'Pending':
                             pending_workflows += 1
                             break
-                        else:
-                            children = node.get('children')
-                    else:
-                        if children:
-                            if node_id in children:
-                                if node.get('phase') == 'Running':
-                                    children_running = True
-                                    break
-                            else: 
-                                children_running = True
-                                break
-                        else:
-                            if node.get('phase') == 'Pending':
-                                pending_workflows += 1
-                                break
-                    
-                if not children_running:
-                    pending_workflows += 1
+                    elif node.get('type') == 'pod':
+                        if node.get('phase') == 'Pending':
+                            pending_workflows += 1
+                            break
 
             self.metrics.get('workflows').get('Pods_pending') \
                 .get(worker).set(pending_workflows)
@@ -325,7 +309,7 @@ class Scheduler():
                     parse_memory_to_bytes(workflow_node.get('spec').get('memory')) >= parse_memory_to_bytes(resources.get('memory')):
                         if 'labels' not in workflow.get('workflow').get('metadata'):
                             workflow.get('workflow').get('metadata')['labels'] =  {}
-                            
+
                         workflow.get('workflow').get('metadata') \
                             .get('labels')['workflow.nebulouscloud.eu/workersize'] = workflow_node.get("metadata").get("name")
                         for template in workflow.get('workflow').get('spec').get('templates'):
