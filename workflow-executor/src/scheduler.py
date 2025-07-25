@@ -116,7 +116,7 @@ class Scheduler():
                         if node.get('phase') == 'Pending':
                             pending_workflows += 1
                             break
-                    elif node.get('type') == 'pod':
+                    elif node.get('type') == 'Pod':
                         if node.get('phase') == 'Pending':
                             pending_workflows += 1
                             break
