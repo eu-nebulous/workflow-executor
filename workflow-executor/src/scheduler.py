@@ -309,9 +309,6 @@ class Scheduler():
                         workflow.get('workflow').get('metadata') \
                             .get('labels')['workflow.nebulouscloud.eu/workersize'] = workflow_node.get("metadata").get("name")
                         for template in workflow.get('workflow').get('spec').get('templates'):
-                            print(f"metadata {workflow.get('workflow').get('metadata')}")
-                            print(f"labels {workflow.get('workflow').get('metadata').get('labels')}")
-                            print(f"labels workflow {workflow.get('workflow').get('metadata').get('labels').get('workflow')}")
                             template['affinity'] = {
                                 'podAffinity': {
                                     'requiredDuringSchedulingIgnoredDuriion': [{
