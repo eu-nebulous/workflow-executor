@@ -182,8 +182,13 @@ class Scheduler():
 
         workers = {}
 
+        print(f"Nodes {len(nodes)}", flush=True)
+        print(f"workflowworkers {len(workflow_nodes)}", flush=True)
+
         for node in nodes:
             for workflow_node in workflow_nodes:
+                print(f"CPU: {node.status.capacity.get('cpu')} - {workflow_node.get('spec').get('cpu')}", flush=True)
+                print(f"Memory: {parse_memory_to_bytes(node.status.capacity.get('memory'))} - {parse_memory_to_bytes(workflow_node.get('spec').get('memory'))}", flush=True)
                 if node.status.capacity.get('cpu') >= workflow_node.get('spec').get('cpu') and \
                     parse_memory_to_bytes(node.status.capacity.get('memory')) >= parse_memory_to_bytes(workflow_node.get('spec').get('memory')):
                         try:
