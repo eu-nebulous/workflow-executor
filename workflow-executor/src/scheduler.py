@@ -87,6 +87,8 @@ class Scheduler():
             return []
 
     def publish_metrics(self):
+        self.label_workflow_nodes()
+
         for worker, size in self.workers.items():
             self.metrics.get('nodes').get(worker).set(size)
             
@@ -107,31 +109,15 @@ class Scheduler():
 
             pending_workflows = 0
             for workflow in workflows:
-                children = []
-                children_running = False
-                for node_id, node in workflow.get('status').get('nodes').items():
+                for node in workflow.get('status').get('nodes').values():
                     if node.get('type') == 'DAG':
                         if node.get('phase') == 'Pending':
                             pending_workflows += 1
                             break
-                        else:
-                            children = node.get('children')
-                    else:
-                        if children:
-                            if node_id in children:
-                                if node.get('phase') == 'Running':
-                                    children_running = True
-                                    break
-                            else: 
-                                children_running = True
-                                break
-                        else:
-                            if node.get('phase') == 'Pending':
-                                pending_workflows += 1
-                                break
-                    
-                if not children_running:
-                    pending_workflows += 1
+                    elif node.get('type') == 'Pod':
+                        if node.get('phase') == 'Pending':
+                            pending_workflows += 1
+                            break
 
             self.metrics.get('workflows').get('Pods_pending') \
                 .get(worker).set(pending_workflows)
@@ -142,7 +128,6 @@ class Scheduler():
             self.define_metrics()
 
             if self.metrics:
-                self.label_workflow_nodes()
                 self.publish_metrics()
             else:
                 error_message = "No workflow workers defined."
@@ -200,17 +185,15 @@ class Scheduler():
                 if node.status.capacity.get('cpu') >= workflow_node.get('spec').get('cpu') and \
                     parse_memory_to_bytes(node.status.capacity.get('memory')) >= parse_memory_to_bytes(workflow_node.get('spec').get('memory')):
                         try:
-                            body = {
-                                "metadata": {
-                                    "labels": {
-                                        "workflow.nebulouscloud.eu/workersize": workflow_node.get('metadata').get('name')
-                                    }
-                                }
-                            }
-
                             self.core_client.patch_node(
                                 node.metadata.name,
-                                body,
+                                {
+                                    "metadata": {
+                                        "labels": {
+                                            "workflow.nebulouscloud.eu/workersize": workflow_node.get('metadata').get('name')
+                                        }
+                                    }
+                                }
                             )
                             if workflow_node.get('metadata').get('name') in workers:
                                 workers[workflow_node.get('metadata').get('name')] += 1
@@ -219,7 +202,7 @@ class Scheduler():
                             break
 
                         except Exception as e:
-                            print(e, flush=True)
+                            print(f"Error labeling Nodes {e}", flush=True)
 
         self.workers = workers
 
@@ -320,12 +303,15 @@ class Scheduler():
             for workflow_node in workflow_nodes:
                 if workflow_node.get('spec').get('cpu') >= resources.get('cpu') and \
                     parse_memory_to_bytes(workflow_node.get('spec').get('memory')) >= parse_memory_to_bytes(resources.get('memory')):
+                        if 'labels' not in workflow.get('workflow').get('metadata'):
+                            workflow.get('workflow').get('metadata')['labels'] =  {}
+
                         workflow.get('workflow').get('metadata') \
                             .get('labels')['workflow.nebulouscloud.eu/workersize'] = workflow_node.get("metadata").get("name")
                         for template in workflow.get('workflow').get('spec').get('templates'):
                             template['affinity'] = {
                                 'podAffinity': {
-                                    'requiredDuringSchedulingIgnoredDuringExecution': [{
+                                    'requiredDuringSchedulingIgnoredDuriion': [{
                                         'labelSelector': {
                                             'matchLabels': {
                                                 'workflow': workflow.get("workflow").get('metadata').get('labels').get('workflow')

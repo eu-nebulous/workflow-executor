@@ -10,6 +10,8 @@ import threading
 import os
 from scheduler import Scheduler
 
+import traceback
+
 PROXY_PORT = int(os.environ.get('PROXY_PORT', 8080))
 PROXY_ADDRESS = os.environ.get('PROXY_ADDRESS', "0.0.0.0")
 TARGET_SERVER = os.environ.get('TARGET_SERVER', "http://0.0.0.0")
@@ -111,7 +113,8 @@ def publish_metrics(scheduler):
         try:
             scheduler.check_publish_metrics()
         except Exception as e:
-            print(f"Error publishing metrics: {e}", flush=True)
+            error_msg = traceback.format_exc()
+            print(f"Error publishing metrics: {error_msg}", flush=True)
             
 def run_proxy():
     """
