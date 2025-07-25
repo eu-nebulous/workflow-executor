@@ -1,6 +1,8 @@
 import os
 import re
 
+import traceback
+
 from kubernetes import client, config
 from kubernetes.client import CustomObjectsApi
 from prometheus_client import start_http_server, Gauge
@@ -88,7 +90,7 @@ class Scheduler():
 
     def publish_metrics(self):
         self.label_workflow_nodes()
-        
+
         for worker, size in self.workers.items():
             self.metrics.get('nodes').get(worker).set(size)
             
@@ -344,7 +346,8 @@ class Scheduler():
             return workflow
         
         except Exception as e:
-            print(e, flush=True)
+            error_msg = traceback.format_exc()
+            print(error_msg, flush=True)
             return workflow
 
 def main():
