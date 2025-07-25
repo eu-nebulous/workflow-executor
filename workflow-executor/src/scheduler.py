@@ -200,6 +200,9 @@ class Scheduler():
                                 }
                             }
 
+                            print(f"Node Name {node.metadata.name}", flush=True)
+                            print(f"Body {body}", flush=True)
+
                             self.core_client.patch_node(
                                 node.metadata.name,
                                 body,
