@@ -323,8 +323,9 @@ class Scheduler():
             for workflow_node in workflow_nodes:
                 if workflow_node.get('spec').get('cpu') >= resources.get('cpu') and \
                     parse_memory_to_bytes(workflow_node.get('spec').get('memory')) >= parse_memory_to_bytes(resources.get('memory')):
-                        print(workflow.get('workflow').get('metadata'), flush=True)
-                        print(workflow.get('workflow').get('metadata').get('labels'), flush=True)
+                        if 'labels' not in workflow.get('workflow').get('metadata'):
+                            workflow.get('workflow').get('metadata')['labels'] =  {}
+                            
                         workflow.get('workflow').get('metadata') \
                             .get('labels')['workflow.nebulouscloud.eu/workersize'] = workflow_node.get("metadata").get("name")
                         for template in workflow.get('workflow').get('spec').get('templates'):
