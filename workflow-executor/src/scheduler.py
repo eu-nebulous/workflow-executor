@@ -1,8 +1,6 @@
 import os
 import re
 
-import traceback
-
 from kubernetes import client, config
 from kubernetes.client import CustomObjectsApi
 from prometheus_client import start_http_server, Gauge
@@ -204,7 +202,7 @@ class Scheduler():
                             break
 
                         except Exception as e:
-                            print(e, flush=True)
+                            print(f"Error labeling Nodes {e}", flush=True)
 
         self.workers = workers
 
@@ -334,8 +332,7 @@ class Scheduler():
             return workflow
         
         except Exception as e:
-            error_msg = traceback.format_exc()
-            print(error_msg, flush=True)
+            print(e, flush=True)
             return workflow
 
 def main():
